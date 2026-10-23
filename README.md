@@ -2,10 +2,17 @@
 
 An interactive, browser-based visualizer for classical search algorithms solving the 8-puzzle. Configure an initial and goal board, choose a search strategy, and inspect the returned move sequence, playback, and search metrics.
 
-> **Demo video:** Not available yet. See [Optional demo video](#optional-demo-video) for the placeholder.
+> **Project demo:** [Watch the recorded project walkthrough](demo-video.mp4) (`demo-video.mp4`).
+
+## Project Demonstration Video
+
+A recorded walkthrough of the AI 8-Puzzle Visualizer is included in the repository as an MP4 file.
+
+[▶ Watch the project demonstration](demo-video.mp4)
 
 ## Table of contents
 
+- [Project Demonstration Video](#project-demonstration-video)
 - [Overview](#overview)
 - [The 8-puzzle problem](#the-8-puzzle-problem)
 - [Features](#features)
@@ -206,11 +213,9 @@ No screenshot assets are included in the repository. The running application its
 
 ## Optional demo video
 
-A demo video has not been provided yet. Add a real recording later and replace this placeholder with its relative path or a verified hosted link.
+The recorded project walkthrough is available in the [Project Demonstration Video](#project-demonstration-video) section near the top of this README.
 
-```text
-Demo video: To be added
-```
+[Open the project video](demo-video.mp4)
 
 ## Limitations
 
