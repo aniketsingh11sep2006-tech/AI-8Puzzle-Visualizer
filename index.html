@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive 8-Puzzle AI Solver — Visualize BFS, DFS, DLS, IDDLS, GBFS, and A* search algorithms solving the classic 8-puzzle problem." />
+  <title>8-Puzzle AI Solver | AI Search Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="10" height="10" rx="2" fill="url(#g1)"/>
+          <rect x="13" y="1" width="10" height="10" rx="2" fill="url(#g1)"/>
+          <rect x="25" y="1" width="10" height="10" rx="2" fill="url(#g1)" opacity="0.3"/>
+          <rect x="1" y="13" width="10" height="10" rx="2" fill="url(#g1)"/>
+          <rect x="13" y="13" width="10" height="10" rx="2" fill="url(#g1)" opacity="0.3"/>
+          <rect x="25" y="13" width="10" height="10" rx="2" fill="url(#g1)"/>
+          <rect x="1" y="25" width="10" height="10" rx="2" fill="url(#g1)"/>
+          <rect x="13" y="25" width="10" height="10" rx="2" fill="url(#g1)"/>
+          <rect x="25" y="25" width="10" height="10" rx="2" fill="url(#g1)"/>
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="brand-text">8-Puzzle <span class="brand-accent">AI</span></span>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <button class="nav-btn active" data-tab="home" id="nav-home">Home</button>
+      <button class="nav-btn" data-tab="solver" id="nav-solver">Puzzle Solver</button>
+      <button class="nav-btn" data-tab="visualization" id="nav-visualization">Visualization</button>
+      <button class="nav-btn" data-tab="comparison" id="nav-comparison">Comparison</button>
+      <button class="nav-btn" data-tab="info" id="nav-info">Algorithms</button>
+      <button class="nav-btn" data-tab="about" id="nav-about">About</button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <main>
+
+    <!-- ═══════════ TAB: HOME ═══════════ -->
+    <section class="tab-section active" id="tab-home">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            AI Search Algorithms
+          </div>
+          <h1 class="hero-title">
+            Solve the <span class="gradient-text">8-Puzzle</span><br/>with Artificial Intelligence
+          </h1>
+          <p class="hero-sub">
+            Visualize how BFS, DFS, DLS, IDDLS, Greedy Best-First, and A* navigate the state space to find the optimal solution — with step-by-step animation and performance comparison.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="heroSolveBtn" onclick="switchTab('solver')">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+              Start Solving
+            </button>
+            <button class="btn btn-ghost" onclick="switchTab('info')">
+              Learn Algorithms →
+            </button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><span class="stat-num">6</span><span class="stat-label">Algorithms</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span class="stat-num">2</span><span class="stat-label">Heuristics</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Puzzles</span></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="demo-puzzle" id="demoPuzzle">
+            <div class="demo-grid" id="demoGrid"></div>
+            <div class="demo-label">Live Demo</div>
+          </div>
+          <div class="orbit-ring ring-1"></div>
+          <div class="orbit-ring ring-2"></div>
+          <div class="glow-blob"></div>
+        </div>
+      </div>
+
+      <!-- Feature cards -->
+      <div class="features-section">
+        <h2 class="section-title">Everything you need to understand AI search</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+            </div>
+            <h3>6 Search Algorithms</h3>
+            <p>BFS, DFS, Depth-Limited, Iterative Deepening, Greedy Best-First, and A* — all implemented from scratch.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </div>
+            <h3>Step-by-Step Visualization</h3>
+            <p>Watch each tile move with smooth animations. Pause, rewind, and step through the solution at your own pace.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <h3>Algorithm Comparison</h3>
+            <p>Run all algorithms on the same puzzle and compare nodes explored, time, and solution length side by side.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+            </div>
+            <h3>Custom Configuration</h3>
+            <p>Input any solvable puzzle configuration manually or generate random solvable puzzles with one click.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ TAB: SOLVER ═══════════ -->
+    <section class="tab-section" id="tab-solver">
+      <div class="page-header">
+        <h1 class="page-title">Puzzle <span class="gradient-text">Solver</span></h1>
+        <p class="page-sub">Configure your puzzle, select an algorithm, and watch AI find the solution.</p>
+      </div>
+
+      <div class="solver-layout">
+        <!-- Config Panel -->
+        <div class="solver-config glass-card">
+          <h2 class="card-title">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+            Configuration
+          </h2>
+
+          <!-- Initial State -->
+          <div class="config-group">
+            <label class="config-label">Initial State</label>
+            <div class="config-grid-input" id="initialInput">
+              <!-- 9 cells rendered by JS -->
+            </div>
+            <div class="config-actions">
+              <button class="btn btn-sm btn-ghost" id="randomBtn">🎲 Random</button>
+              <button class="btn btn-sm btn-ghost" id="clearBtn">✕ Clear</button>
+            </div>
+          </div>
+
+          <!-- Goal State -->
+          <div class="config-group">
+            <label class="config-label">Goal State</label>
+            <div class="config-grid-input" id="goalInput">
+              <!-- 9 cells rendered by JS -->
+            </div>
+            <div class="config-actions">
+              <button class="btn btn-sm btn-ghost" id="defaultGoalBtn">↩ Default</button>
+            </div>
+          </div>
+
+          <!-- Algorithm selector -->
+          <div class="config-group">
+            <label class="config-label">Algorithm</label>
+            <select class="select-field" id="algorithmSelect">
+              <option value="bfs">Breadth-First Search (BFS)</option>
+              <option value="dfs">Depth-First Search (DFS)</option>
+              <option value="dls">Depth-Limited Search (DLS)</option>
+              <option value="iddls">Iterative Deepening DLS (IDDLS)</option>
+              <option value="gbfs">Greedy Best-First Search (GBFS)</option>
+              <option value="astar" selected>A* Search</option>
+            </select>
+          </div>
+
+          <!-- DLS depth limit -->
+          <div class="config-group" id="dlsConfig" style="display:none;">
+            <label class="config-label">Depth Limit</label>
+            <input type="number" class="input-field" id="depthLimit" value="30" min="1" max="100" />
+          </div>
+
+          <!-- Heuristic selector -->
+          <div class="config-group" id="heuristicConfig">
+            <label class="config-label">Heuristic</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="heuristic" value="manhattan" checked id="hManhattan" />
+                <span class="radio-custom"></span>
+                Manhattan Distance
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="heuristic" value="misplaced" id="hMisplaced" />
+                <span class="radio-custom"></span>
+                Misplaced Tiles
+              </label>
+            </div>
+          </div>
+
+          <!-- Speed control -->
+          <div class="config-group">
+            <label class="config-label">Animation Speed</label>
+            <div class="speed-row">
+              <span class="speed-label">Slow</span>
+              <input type="range" id="speedSlider" min="100" max="1500" value="600" step="100" class="range-slider" />
+              <span class="speed-label">Fast</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-full" id="solveBtn">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+            Solve Puzzle
+          </button>
+
+          <div class="solvability-badge" id="solvabilityBadge">
+            <div class="s-indicator unknown" id="sIndicator"></div>
+            <span id="solvabilityText">Enter a puzzle to check</span>
+          </div>
+        </div>
+
+        <!-- Puzzle Display & Controls -->
+        <div class="solver-main">
+          <div class="puzzle-display glass-card">
+            <div class="puzzle-area">
+              <div class="puzzle-wrapper">
+                <div class="puzzle-label">Initial</div>
+                <div class="puzzle-grid" id="mainPuzzle"></div>
+              </div>
+              <div class="puzzle-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <div class="step-counter" id="stepCounter">—</div>
+              </div>
+              <div class="puzzle-wrapper">
+                <div class="puzzle-label">Goal</div>
+                <div class="puzzle-grid" id="goalPuzzle"></div>
+              </div>
+            </div>
+
+            <!-- Playback controls -->
+            <div class="playback-controls" id="playbackControls">
+              <button class="ctrl-btn" id="prevBtn" title="Previous step">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"/></svg>
+              </button>
+              <button class="ctrl-btn ctrl-play" id="playPauseBtn" title="Play / Pause">
+                <svg id="playIcon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+                <svg id="pauseIcon" viewBox="0 0 20 20" fill="currentColor" style="display:none"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              </button>
+              <button class="ctrl-btn" id="nextBtn" title="Next step">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"/></svg>
+              </button>
+              <button class="ctrl-btn" id="resetBtn" title="Reset to initial">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+              </button>
+            </div>
+
+            <!-- Solution progress bar -->
+            <div class="progress-row" id="progressRow" style="display:none;">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progressFill"></div>
+              </div>
+              <span class="progress-text" id="progressText">Step 0 / 0</span>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-row" id="statsRow">
+            <div class="stat-card glass-card">
+              <div class="stat-icon blue">🔍</div>
+              <div class="stat-info">
+                <div class="stat-value" id="statNodes">—</div>
+                <div class="stat-lbl">Nodes Explored</div>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon purple">📏</div>
+              <div class="stat-info">
+                <div class="stat-value" id="statDepth">—</div>
+                <div class="stat-lbl">Solution Depth</div>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon green">⏱️</div>
+              <div class="stat-info">
+                <div class="stat-value" id="statTime">—</div>
+                <div class="stat-lbl">Time (ms)</div>
+              </div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon orange">🔢</div>
+              <div class="stat-info">
+                <div class="stat-value" id="statMoves">—</div>
+                <div class="stat-lbl">Solution Moves</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Move list -->
+          <div class="movelist-card glass-card" id="movelistCard" style="display:none;">
+            <h3 class="card-title">Solution Path</h3>
+            <div class="move-list" id="moveList"></div>
+          </div>
+
+          <!-- Status / error message -->
+          <div class="status-message" id="statusMessage"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ TAB: VISUALIZATION ═══════════ -->
+    <section class="tab-section" id="tab-visualization">
+      <div class="page-header">
+        <h1 class="page-title">Search <span class="gradient-text">Visualization</span></h1>
+        <p class="page-sub">Explore the frontier and explored-set growth as the algorithm searches.</p>
+      </div>
+
+      <div class="viz-layout">
+        <div class="viz-controls glass-card">
+          <h2 class="card-title">Controls</h2>
+          <p class="card-sub">Run a solve from the Solver tab first, then switch here to see the search analytics.</p>
+          <div class="viz-info-grid" id="vizInfoGrid">
+            <div class="viz-info-item">
+              <span class="viz-info-label">Algorithm</span>
+              <span class="viz-info-value" id="vizAlgo">—</span>
+            </div>
+            <div class="viz-info-item">
+              <span class="viz-info-label">Heuristic</span>
+              <span class="viz-info-value" id="vizHeuristic">—</span>
+            </div>
+            <div class="viz-info-item">
+              <span class="viz-info-label">Nodes Generated</span>
+              <span class="viz-info-value" id="vizGenerated">—</span>
+            </div>
+            <div class="viz-info-item">
+              <span class="viz-info-label">Nodes Explored</span>
+              <span class="viz-info-value" id="vizExplored">—</span>
+            </div>
+            <div class="viz-info-item">
+              <span class="viz-info-label">Max Frontier Size</span>
+              <span class="viz-info-value" id="vizFrontier">—</span>
+            </div>
+            <div class="viz-info-item">
+              <span class="viz-info-label">Solution Length</span>
+              <span class="viz-info-value" id="vizSolution">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-main glass-card">
+          <h2 class="card-title">Search Growth Chart</h2>
+          <div class="chart-container">
+            <canvas id="searchChart"></canvas>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-dot blue"></span> Explored
+            <span class="legend-dot purple"></span> Frontier
+          </div>
+        </div>
+      </div>
+
+      <!-- Search tree nodes -->
+      <div class="glass-card node-explorer" id="nodeExplorer">
+        <h2 class="card-title">State Space Explorer</h2>
+        <p class="card-sub">First 50 explored states shown. Each card is a state the algorithm visited.</p>
+        <div class="node-grid" id="nodeGrid"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════ TAB: COMPARISON ═══════════ -->
+    <section class="tab-section" id="tab-comparison">
+      <div class="page-header">
+        <h1 class="page-title">Algorithm <span class="gradient-text">Comparison</span></h1>
+        <p class="page-sub">Run all 6 algorithms on the same puzzle and compare their performance.</p>
+      </div>
+
+      <div class="comparison-controls glass-card">
+        <p class="card-sub">Uses the puzzle currently set in the Solver tab.</p>
+        <div class="comp-heuristic">
+          <label class="config-label">Heuristic for GBFS / A*</label>
+          <div class="radio-group horiz">
+            <label class="radio-option">
+              <input type="radio" name="compHeuristic" value="manhattan" checked id="compManhattan" />
+              <span class="radio-custom"></span> Manhattan Distance
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="compHeuristic" value="misplaced" id="compMisplaced" />
+              <span class="radio-custom"></span> Misplaced Tiles
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="runComparisonBtn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"/></svg>
+          Run All Algorithms
+        </button>
+      </div>
+
+      <div class="comparison-table-wrap glass-card" id="compTableWrap" style="display:none;">
+        <h2 class="card-title">Results</h2>
+        <table class="comp-table" id="compTable">
+          <thead>
+            <tr>
+              <th>Algorithm</th>
+              <th>Nodes Explored</th>
+              <th>Solution Length</th>
+              <th>Time (ms)</th>
+              <th>Memory (nodes)</th>
+              <th>Optimal?</th>
+              <th>Complete?</th>
+            </tr>
+          </thead>
+          <tbody id="compTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="comp-charts glass-card" id="compChartsCard" style="display:none;">
+        <h2 class="card-title">Visual Comparison</h2>
+        <div class="comp-chart-grid">
+          <div>
+            <h3 class="chart-subtitle">Nodes Explored</h3>
+            <canvas id="compNodesChart" height="220"></canvas>
+          </div>
+          <div>
+            <h3 class="chart-subtitle">Solution Length</h3>
+            <canvas id="compLenChart" height="220"></canvas>
+          </div>
+          <div>
+            <h3 class="chart-subtitle">Time (ms)</h3>
+            <canvas id="compTimeChart" height="220"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ TAB: INFO ═══════════ -->
+    <section class="tab-section" id="tab-info">
+      <div class="page-header">
+        <h1 class="page-title">Algorithm <span class="gradient-text">Reference</span></h1>
+        <p class="page-sub">Deep technical breakdown of every search algorithm with complexity analysis.</p>
+      </div>
+
+      <div class="algo-cards">
+
+        <div class="algo-card glass-card">
+          <div class="algo-badge bfs">BFS</div>
+          <h2>Breadth-First Search</h2>
+          <p class="algo-desc">Explores all nodes at the present depth before moving to nodes at the next depth level. Uses a queue (FIFO) as the frontier.</p>
+          <div class="algo-props">
+            <div class="prop"><span class="prop-key">Complete?</span><span class="prop-val yes">✓ Yes</span></div>
+            <div class="prop"><span class="prop-key">Optimal?</span><span class="prop-val yes">✓ Yes (unit cost)</span></div>
+            <div class="prop"><span class="prop-key">Time</span><span class="prop-val">O(b<sup>d</sup>)</span></div>
+            <div class="prop"><span class="prop-key">Space</span><span class="prop-val">O(b<sup>d</sup>)</span></div>
+          </div>
+          <div class="algo-note">Best for finding the <strong>shortest path</strong> but uses a lot of memory.</div>
+        </div>
+
+        <div class="algo-card glass-card">
+          <div class="algo-badge dfs">DFS</div>
+          <h2>Depth-First Search</h2>
+          <p class="algo-desc">Explores as far as possible along each branch before backtracking. Uses a stack (LIFO) as the frontier.</p>
+          <div class="algo-props">
+            <div class="prop"><span class="prop-key">Complete?</span><span class="prop-val no">✗ No (infinite loops)</span></div>
+            <div class="prop"><span class="prop-key">Optimal?</span><span class="prop-val no">✗ No</span></div>
+            <div class="prop"><span class="prop-key">Time</span><span class="prop-val">O(b<sup>m</sup>)</span></div>
+            <div class="prop"><span class="prop-key">Space</span><span class="prop-val">O(b·m)</span></div>
+          </div>
+          <div class="algo-note">Very <strong>memory-efficient</strong> but may explore very deep paths unnecessarily.</div>
+        </div>
+
+        <div class="algo-card glass-card">
+          <div class="algo-badge dls">DLS</div>
+          <h2>Depth-Limited Search</h2>
+          <p class="algo-desc">DFS with a preset depth limit ℓ — nodes beyond this depth are not explored. Avoids infinite descent.</p>
+          <div class="algo-props">
+            <div class="prop"><span class="prop-key">Complete?</span><span class="prop-val warning">~ If ℓ ≥ d</span></div>
+            <div class="prop"><span class="prop-key">Optimal?</span><span class="prop-val no">✗ No</span></div>
+            <div class="prop"><span class="prop-key">Time</span><span class="prop-val">O(b<sup>ℓ</sup>)</span></div>
+            <div class="prop"><span class="prop-key">Space</span><span class="prop-val">O(b·ℓ)</span></div>
+          </div>
+          <div class="algo-note">Useful when the <strong>solution depth</strong> is known approximately.</div>
+        </div>
+
+        <div class="algo-card glass-card">
+          <div class="algo-badge iddls">IDDLS</div>
+          <h2>Iterative Deepening DLS</h2>
+          <p class="algo-desc">Runs DLS repeatedly with increasing depth limits (0, 1, 2, …) until the goal is found. Combines BFS completeness with DFS memory efficiency.</p>
+          <div class="algo-props">
+            <div class="prop"><span class="prop-key">Complete?</span><span class="prop-val yes">✓ Yes</span></div>
+            <div class="prop"><span class="prop-key">Optimal?</span><span class="prop-val yes">✓ Yes (unit cost)</span></div>
+            <div class="prop"><span class="prop-key">Time</span><span class="prop-val">O(b<sup>d</sup>)</span></div>
+            <div class="prop"><span class="prop-key">Space</span><span class="prop-val">O(b·d)</span></div>
+          </div>
+          <div class="algo-note">The <strong>practical go-to</strong> for uninformed search — optimal and memory-efficient.</div>
+        </div>
+
+        <div class="algo-card glass-card">
+          <div class="algo-badge gbfs">GBFS</div>
+          <h2>Greedy Best-First Search</h2>
+          <p class="algo-desc">Expands the node that appears closest to the goal using only the heuristic h(n). Uses a priority queue ordered by h(n).</p>
+          <div class="algo-props">
+            <div class="prop"><span class="prop-key">Complete?</span><span class="prop-val warning">~ In finite spaces</span></div>
+            <div class="prop"><span class="prop-key">Optimal?</span><span class="prop-val no">✗ No</span></div>
+            <div class="prop"><span class="prop-key">Time</span><span class="prop-val">O(b<sup>m</sup>) worst</span></div>
+            <div class="prop"><span class="prop-key">Space</span><span class="prop-val">O(b<sup>m</sup>)</span></div>
+          </div>
+          <div class="algo-note">Very <strong>fast in practice</strong> but can be misled by inaccurate heuristics.</div>
+        </div>
+
+        <div class="algo-card glass-card">
+          <div class="algo-badge astar">A*</div>
+          <h2>A* Search</h2>
+          <p class="algo-desc">Expands the node with the lowest f(n) = g(n) + h(n), where g(n) is cost so far and h(n) is an admissible heuristic. Optimal and complete.</p>
+          <div class="algo-props">
+            <div class="prop"><span class="prop-key">Complete?</span><span class="prop-val yes">✓ Yes</span></div>
+            <div class="prop"><span class="prop-key">Optimal?</span><span class="prop-val yes">✓ Yes (admissible h)</span></div>
+            <div class="prop"><span class="prop-key">Time</span><span class="prop-val">O(b<sup>d</sup>) best case</span></div>
+            <div class="prop"><span class="prop-key">Space</span><span class="prop-val">O(b<sup>d</sup>)</span></div>
+          </div>
+          <div class="algo-note"><strong>Gold standard</strong> for single-agent pathfinding — optimal with admissible heuristic.</div>
+        </div>
+
+      </div>
+
+      <!-- Heuristics -->
+      <div class="glass-card heuristic-section">
+        <h2 class="card-title">Heuristic Functions</h2>
+        <div class="heuristic-grid">
+          <div class="heuristic-card">
+            <h3>📐 Manhattan Distance</h3>
+            <p>Sum of horizontal + vertical distances each tile must travel to reach its goal position.</p>
+            <div class="formula">h(n) = Σ |row<sub>i</sub> − goal_row<sub>i</sub>| + |col<sub>i</sub> − goal_col<sub>i</sub>|</div>
+            <div class="tag admissible">Admissible & Consistent</div>
+          </div>
+          <div class="heuristic-card">
+            <h3>🔢 Misplaced Tiles</h3>
+            <p>Count of tiles that are not in their goal position (excluding the blank tile).</p>
+            <div class="formula">h(n) = |{i : tile<sub>i</sub> ≠ goal<sub>i</sub>, tile<sub>i</sub> ≠ 0}|</div>
+            <div class="tag admissible">Admissible (dominated by Manhattan)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ TAB: ABOUT ═══════════ -->
+    <section class="tab-section" id="tab-about">
+      <div class="page-header">
+        <h1 class="page-title">About the <span class="gradient-text">Project</span></h1>
+      </div>
+      <div class="about-layout">
+        <div class="glass-card about-card">
+          <h2>Project Overview</h2>
+          <p>This interactive tool was built as an <strong>Artificial Intelligence course assignment</strong> to demonstrate and compare classical search algorithms on the 8-Puzzle problem — a benchmark AI problem that has been studied since the 1960s.</p>
+          <p>The 8-Puzzle consists of a 3×3 grid with tiles numbered 1–8 and one blank space. The objective is to rearrange tiles from an initial configuration to a goal state using the minimum number of moves.</p>
+          <h3>The State Space</h3>
+          <p>The 8-puzzle has <strong>9! / 2 = 181,440</strong> reachable states. Only half of all configurations are solvable — determined by the parity of the permutation.</p>
+        </div>
+        <div class="glass-card about-card">
+          <h2>Technical Stack</h2>
+          <ul class="tech-list">
+            <li><span class="tech-badge">HTML5</span> Semantic structure & accessibility</li>
+            <li><span class="tech-badge">CSS3</span> Custom design system, glassmorphism, animations</li>
+            <li><span class="tech-badge">JavaScript (ES6+)</span> All algorithms, visualizations, and UI logic</li>
+            <li><span class="tech-badge">Canvas API</span> Real-time bar charts for comparison</li>
+            <li><span class="tech-badge">No Dependencies</span> Zero external libraries or frameworks</li>
+          </ul>
+          <h2 style="margin-top:1.5rem">Algorithms Implemented</h2>
+          <ul class="tech-list">
+            <li>🔵 Breadth-First Search (BFS)</li>
+            <li>🟣 Depth-First Search (DFS)</li>
+            <li>🟡 Depth-Limited Search (DLS)</li>
+            <li>🟠 Iterative Deepening DLS (IDDLS)</li>
+            <li>🟢 Greedy Best-First Search (GBFS)</li>
+            <li>⭐ A* Search</li>
+          </ul>
+        </div>
+        <div class="glass-card about-card about-wide">
+          <h2>How to Use</h2>
+          <div class="steps-grid">
+            <div class="step"><div class="step-num">1</div><div><strong>Configure Puzzle</strong> — Enter your initial state or click Random to generate a solvable puzzle.</div></div>
+            <div class="step"><div class="step-num">2</div><div><strong>Select Algorithm</strong> — Choose from 6 algorithms and configure heuristics/depth as needed.</div></div>
+            <div class="step"><div class="step-num">3</div><div><strong>Solve</strong> — Click Solve Puzzle to run the algorithm and see the solution.</div></div>
+            <div class="step"><div class="step-num">4</div><div><strong>Animate</strong> — Use playback controls to step through the solution move by move.</div></div>
+            <div class="step"><div class="step-num">5</div><div><strong>Compare</strong> — Visit the Comparison tab to benchmark all algorithms on the same puzzle.</div></div>
+            <div class="step"><div class="step-num">6</div><div><strong>Visualize</strong> — Check the Visualization tab for search growth charts and explored states.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-brand">8-Puzzle AI Solver</span>
+      <span class="footer-sep">·</span>
+      <span>AI Course Assignment</span>
+      <span class="footer-sep">·</span>
+      <span>Built with HTML · CSS · Vanilla JS</span>
+    </div>
+  </footer>
+
+  <script src="js/algorithms.js"></script>
+  <script src="js/puzzle.js"></script>
+  <script src="js/visualizer.js"></script>
+  <script src="js/comparison.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
